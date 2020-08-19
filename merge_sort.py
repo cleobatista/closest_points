@@ -64,22 +64,35 @@ def closest_pair(_list): # must be a sorted list
         return
 
 def min_from_middle(middle, _list, closest):
-    middle_x = (_list[middle + 1][0][0] - _list[middle][0][0]) / 2 + _list[middle][0][0]
+    middle_x = (_list[middle][0][0] + _list[middle - 1][0][0]) / 2
     upper = middle_x + closest[0]
     lower = middle_x - closest[0]
     points = [item for item in _list if (lower <= item[0][0] <= upper)]
     for i, point in enumerate(points):
         for j, neighbor in enumerate(points[min(i + 1, len(points)): min(len(points),i+8)]):
-            dist = distance(point, neighbor)
-            if dist < delta:
+            dist = distance(point[0], neighbor[0])
+            if dist < closest[0]:
                 closest = dist, point[1], neighbor[1]
 
     return closest
 
 if __name__ == '__main__':
     letters = string.ascii_lowercase
-    places = {''.join(choice(letters) for i in range(5)): (uniform(0,100), uniform(0,100)) for j in range(10)}
-    print(places)
+    places = {''.join(choice(letters) for i in range(5)): (uniform(0,100), uniform(0,100)) for j in range(10000)}
+    # places = {
+    #     'iupsf': (97.8448919666561, 11.882505361323602),
+    #     'iaorl': (79.68101365593799, 52.85814546075439),
+    #     'tgoun': (9.422635226791154, 59.16037172897628),
+    #     'thwed': (60.01072440252473, 76.31087945304903),
+    #     'tecdy': (64.45637552787575, 26.02854028850652),
+    #     'oarig': (20.317313064885823, 77.66275888463161),
+    #     'oqfhb': (52.62966284268068, 14.913507855890796),
+    #     'hwaws': (23.703323257281117, 59.13668085022245),
+    #     'kexng': (92.47218647256712, 55.073224519775785),
+    #     'abdfz': (95.3175546480686, 80.75249257062764)
+    # }
+
+    # print(places)
     places_list = dict_to_list(places)
     places_list = merge_sort(places_list)
     print(closest_pair(places_list))
