@@ -1,4 +1,7 @@
 from numpy import sqrt
+from random import uniform, choice
+import string
+
 def merge_list(list_a, list_b):
     ordered = []
     while list_a or list_b:
@@ -36,7 +39,10 @@ def sort_dict_by_value(_dict):
 
 
 def distance(point_1, point_2):
-   return sqrt(sum(((point_1[0] - point_2[0])**2, (point_1[1] - point_2[1])**2)))
+    if not type(point_1[0]) == float:
+        breakpoint()
+
+    return sqrt(sum(((point_1[0] - point_2[0])**2, (point_1[1] - point_2[1])**2)))
 
 def dict_to_list(_dict):
     return list(zip(_dict.values(), _dict.keys()))
@@ -48,14 +54,17 @@ def closest_pair(_list): # must be a sorted list
         middle = len(_list) // 2
         left = closest_pair(_list[:middle])
         right = closest_pair(_list[middle:])
+        left = right if not left else left
+        right = left if not right else right
         closest = left if min(left[0], right[0]) == left[0] else right
         return min_from_middle(middle, _list, closest)
-    else:
+    elif len(_list) == 2:
         return distance(_list[0][0], _list[1][0]), _list[0][1], _list[1][1]
-
+    else:
+        return
 
 def min_from_middle(middle, _list, closest):
-    middle_x = (_list[middle][0][0] - _list[middle + 1][0][0]) / 2
+    middle_x = (_list[middle + 1][0][0] - _list[middle][0][0]) / 2 + _list[middle][0][0]
     upper = middle_x + closest[0]
     lower = middle_x - closest[0]
     points = [item for item in _list if (lower <= item[0][0] <= upper)]
@@ -66,4 +75,12 @@ def min_from_middle(middle, _list, closest):
                 closest = dist, point[1], neighbor[1]
 
     return closest
+
+if __name__ == '__main__':
+    letters = string.ascii_lowercase
+    places = {''.join(choice(letters) for i in range(5)): (uniform(0,100), uniform(0,100)) for j in range(10)}
+    print(places)
+    places_list = dict_to_list(places)
+    places_list = merge_sort(places_list)
+    print(closest_pair(places_list))
 
