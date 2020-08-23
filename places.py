@@ -6,7 +6,7 @@ import plotly.graph_objs as go
 
 class Places:
 
-    def __init__(self, places = None, n=None, amplitude=100):
+    def __init__(self, places=None, n=None, amplitude=100):
         self.places = places
         if not places:
             assert n, "if you don't give the places, give me a number of places to generate random n places"
@@ -58,23 +58,31 @@ class Places:
     def dict_to_list(self, _dict):
         return list(zip(_dict.values(), _dict.keys()))
 
+    def brute_force_distance(self, _list):
+        """
+        format list [((x1, y1), name1), ((x2, y2), name2), ...]
+        """
+        assert len(_list) <= 3, "Please, don't ask me to do what I can't do"
+        results = []
+        for i, location in enumerate(_list):
+            for j, neighbor in enumerate(_list[i+1:]):
+                results.append((self.distance(location[0], neighbor[0]),
+                                location[1], neighbor[1]))
+        return min(results)
+
     #list format [[(x,y), name]]
-    def closest_pair(self, _list = None): # must be a sorted list
+    def closest_pair(self, _list=None):  # must be a sorted list
         if not _list:
             _list = self.dict_to_list(self.places)
             _list = self.merge_sort((_list))
-        if len(_list) > 2:
+        if len(_list) > 3:
             middle = len(_list) // 2
             left = self.closest_pair(_list[:middle])
             right = self.closest_pair(_list[middle:])
-            left = right if not left else left
-            right = left if not right else right
             closest = left if min(left[0], right[0]) == left[0] else right
             return self.min_from_middle(middle, _list, closest)
-        elif len(_list) == 2:
-            return self.distance(_list[0][0], _list[1][0]), _list[0][1], _list[1][1]
         else:
-            return
+            return self.brute_force_distance(_list)
 
     def min_from_middle(self, middle, _list, closest):
         middle_x = (_list[middle][0][0] + _list[middle - 1][0][0]) / 2
@@ -82,7 +90,7 @@ class Places:
         lower = middle_x - closest[0]
         points = [item for item in _list if (lower <= item[0][0] <= upper)]
         for i, point in enumerate(points):
-            for j, neighbor in enumerate(points[min(i + 1, len(points)): min(len(points),i+8)]):
+            for j, neighbor in enumerate(points[min(i + 1, len(points)): min(len(points),i+6)]):
                 dist = self.distance(point[0], neighbor[0])
                 if dist < closest[0]:
                     closest = dist, point[1], neighbor[1]
@@ -120,9 +128,14 @@ class Places:
         fig.show()
 
 if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("n", help="number of places for generate")
+    args = parser.parse_args()
     letters = string.ascii_lowercase
-    places = Places(n=20)
-    breakpoint()
+    n = int(args.n)
+    places = Places(n=n)
+
 
     # places_list = dict_to_list(places)
     # places_list = merge_sort(places_list)
