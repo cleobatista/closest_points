@@ -1,7 +1,7 @@
-from numpy import sqrt
 from random import uniform, choice
 import string
 
+from numpy import sqrt
 import plotly.graph_objs as go
 
 class Places:
@@ -11,7 +11,7 @@ class Places:
         if not places:
             assert n, "if you don't give the places, give me a number of places to generate random n places"
             letters = string.ascii_lowercase
-            self.places = {''.join(choice(letters) for i in range(5)): (uniform(0,amplitude), uniform(0,amplitude)) for j in range(n)}
+            self.places = {''.join(choice(letters) for i in range(5)): [uniform(0,amplitude), uniform(0,amplitude)] for j in range(n)}
         else:
             assert type(places) == dict, "places must be a dict, if you refering to n, please name it"
 
@@ -43,13 +43,6 @@ class Places:
             return ordered
         else:
             return _list
-
-
-    def sort_dict_by_value(self, _dict):
-        _list = [(x, i) for (x, y), i in zip(list(_dict.values()), list(_dict))] # O(n)
-        index = [i for x, i in self.merge_sort(_list)] # O(n)
-        ordered_keys = {i:_dict[i] for i in index} # O(n)
-        return ordered_keys
 
 
     def distance(self, point_1, point_2):
@@ -132,12 +125,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("n", help="number of places for generate")
     args = parser.parse_args()
-    letters = string.ascii_lowercase
     n = int(args.n)
     places = Places(n=n)
-
-
-    # places_list = dict_to_list(places)
-    # places_list = merge_sort(places_list)
-    # print(closest_pair(places_list))
-
